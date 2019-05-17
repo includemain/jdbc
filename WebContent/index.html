@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+<link rel="stylesheet" href="./css/bootstrap.css">
+<script src="js/vue-2.4.0.js"></script>
+<script src="./js/vue-resource-1.3.4.js"></script>
+<!-- <script src="./js/jquery-1.8.3.js"></script> -->
+<!-- <script src="./js/bootstrap.js"></script> -->
+</head>
+
+<body>
+	<div id="app">
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">涛涛的成绩管理系统</h3>
+			</div>
+			<div class="panel-body">
+
+				<span class="form-inline"> 
+					<input type="text" class="form-control" placeholder="add ID" v-model="id"> 
+					<input type="text" class="form-control" placeholder="add CNAME" v-model="name"> 
+					<input type="button" value="添加" class="btn btn-primary" @click="add()">
+					<input type="text" class="form-control" placeholder="seach ID" v-model="seachID"> 
+					<input type="button" value="seach" class="btn btn-primary" @click="creat()">
+				</span>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-hover table-striped">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>name</th>
+					<th>ctime</th>
+					<th>ppp</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in list" :key="item.id">
+					<td>{{item.id}}</td>
+					<td>{{item.cname}}</td>
+					<td @click="update(item.id)">修改</td>
+					<td @click="del(item.id)">删除</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+	</div>
+	<script>
+        new Vue({
+            el: '#app',
+            data: {
+            	id:'',
+                name:'',
+                seachID:'',
+                list:[
+                    
+                ]
+            },
+            created(){
+                this.creat();  
+            },
+            methods: {
+            	creat(){
+					this.$http.post('QueryAllRecordServlet',{id:this.seachID},{emulateJSON:true}).then(result => {
+						
+						
+						alert(result.body[0]['records'])	
+						this.list = result.body[0]['records'];
+						this.seachID = ''
+                    },
+                    function(){
+                    	alert('请求失败处理')
+                    }
+            	)},
+                add(){
+                    this.$http.post('Addsqlserver',{id:this.id,name:this.name},{emulateJSON:true}).then(result => {
+                    	alert("success");
+						
+						this.id = '';
+						this.name = ''
+						alert('插入成功')
+						
+						
+                    },
+                    function(){
+                    	alert('defet')
+                    }
+                    );
+                    this.creat();
+                    
+                },
+                del(id){
+                	this.$http.post('Delserver',{id:id},{emulateJSON:true}).then(result =>{
+                			
+                		},
+                		function(){
+                			alert('error');
+                		}
+                	)
+                	this.creat();
+                },
+                update(id){
+                	$("#myModalLabel").text("修改");
+                    $('#myModal').modal();
+                }
+
+            },
+            directives: {
+
+            }
+        })
+    </script>
+</body>
+
+</html>
